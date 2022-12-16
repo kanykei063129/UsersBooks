@@ -20,6 +20,4 @@ public interface UserService{
     void groupUsersByGender();
 
     String buyBooks(String name, List<Book>books);
-
-
 }
