@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Scanner;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
 
         // Бардык Id лер уникальный болуш керек. Эгер уникальный болбосо озубуз тузгон UniqueConstraintException класс ыргытсын.
         // User дин email адресси уникальный болуш керек жана @ болуусу керек. Эгер уникальный болбосо UniqueConstraintException класс,
@@ -34,11 +34,10 @@ public class Main {
         User user3 = new User(2L, "Aigerim", "Bektova", "@aigerimbektenova", "+996123456767", Gender.FEMALE, new BigDecimal(1234), (List<Book>) book1);
         User user4 = new User(6L, "Madina", "Bektenova", "@madinabektenova", "+996456341278", Gender.FEMALE, new BigDecimal(5677), (List<Book>) book2);
         List<User> users = new ArrayList<>(List.of(user, user1, user2, user3, user4));
-        UserServiceImpl userService = new UserServiceImpl();
-        userService.createUser(users);
-        BookServiceImpl bookService = new BookServiceImpl();
-        bookService.createBooks(books);
+        BookServiceImpl bookServiceImpl = new BookServiceImpl();
+        UserServiceImpl userServiceImpl = new UserServiceImpl();
         while (true) {
+            int number = new Scanner(System.in).nextInt();
             System.out.println("""
                     1 CREATE USER
                     2 FIND ALL USERS
@@ -56,24 +55,50 @@ public class Main {
                     14 GET BOOK BY INITIAL LETTER
                     15 MAX PRICE BOOK
                       """);
-            Scanner input = null;
-            switch (input.nextInt()) {
-                case 1 -> userService.findAllUsers();
-                case 2 ->
-                case 3 ->
-                case 4 ->
-                case 5 ->
-                case 6 ->
-                case 7 ->
-                case 8 ->
-                case 9 ->
-                case 10 ->
-                case 11 ->
-                case 12 ->
-                case 13 ->
-                case 14 ->
-                case 15 ->
+            switch (number) {
+                case 1 -> System.out.println(userServiceImpl.createUser(users));
+                case 2 -> System.out.println(userServiceImpl.findAllUsers());
+                case 3 -> {
+                    System.out.print("Write the id: ");
+                    long x = new Scanner(System.in).nextInt();
+                    System.out.println(userServiceImpl.findUserById(x));
+
+                }
+                case 4 -> {
+                    System.out.print("Write the name: ");
+                    String word = new Scanner(System.in).next();
+                    System.out.println(userServiceImpl.removeUserByName(word));
+                }
+                case 5 -> {
+                    System.out.print("Write the id: ");
+                    long s = new Scanner(System.in).nextInt();
+                    userServiceImpl.updateUser(s);
+                }
+                case 6 -> userServiceImpl.groupUsersByGender();
+                case 7 -> {
+                    System.out.print("Write the person name: ");
+                    String x = new Scanner(System.in).nextLine();
+                    userServiceImpl.buyBooks(x, bookServiceImpl.getAllBooks());
+                }
+                case 8 -> System.out.println(bookServiceImpl.createBooks(books));
+                case 9 -> System.out.println(bookServiceImpl.getAllBooks());
+                case 10 -> {
+                    System.out.print("Write the genre: ");
+                    String word = new Scanner(System.in).next();
+                    System.out.println(bookServiceImpl.getBooksByGenre(word));
+                }
+                case 11 -> {
+                    System.out.print("Write the id: ");
+                    long x = new Scanner(System.in).nextInt();
+                    System.out.println(bookServiceImpl.removeBookById(x));
+
+                }
+                case 12 -> System.out.println(bookServiceImpl.maxPriceBook());
+            }
+            case 13 -> System.out.println(bookServiceImpl.filterBooksByPublishedYear());
+            case 14 -> System.out.println(bookServiceImpl.getBookByInitialLetter());
+            case 15 -> System.out.println(bookServiceImpl.maxPriceBook());
+                default -> throw new Exception("There is no such thing");
             }
         }
     }
-}

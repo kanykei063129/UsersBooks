@@ -3,63 +3,80 @@ package service.Impl;
 import model.Book;
 import service.BookService;
 
+import java.time.LocalDate;
 import java.util.*;
 
-public class BookServiceImpl implements BookService{
+public class BookServiceImpl implements BookService {
     List<Book> books = new ArrayList<>();
 
     @Override
-    public String createBooks(List<Book> books) {
+    public List<Book> createBooks(List<Book> books) {
         this.books.addAll(books);
-        return "WAS SUCCESSFUL!!!";
+        return this.books;
     }
 
     @Override
     public List<Book> getAllBooks() {
-        return books;
+        return this.books;
     }
 
     @Override
     public List<Book> getBooksByGenre(String genre) {
-        return null;
+        List<Book> books1 = new LinkedList<>();
+        for (Book book : this.books) {
+            if (book.getGenre().name().equals(genre)) {
+                books1.add(book);
+            }
+        }
+        return books1;
     }
 
     @Override
-    public String removeBookById(Long id) {
-        for (Book book : books) {
-            if (book.getId().equals(id)) {
+    public Book removeBookById(Long id) {
+        for (Book book : this.books) {
+            if (book.getId().longValue() == id) {
                 this.books.remove(book);
             }
         }
-        return "WAS SUCCESSFUL!!!";
+        return null;
     }
 
     @Override
     public List<Book> sortBooksByPriceInDescendingOrder() {
-        Collections.sort(books);
-        for (Book book : books) {
-            System.out.println(
-                    "\nprice = " + book.getPrice()
-            );
-        }
-        return null;
+        this.books.sort(compare);
+        return this.books;
     }
 
     @Override
     public List<Book> filterBooksByPublishedYear() {
-        return null;
+
+        LocalDate i = LocalDate.ofEpochDay(LocalDate.now().getYear() - 10);
+        List<Book> books1 = this.books.stream().filter(x -> x.getPublishedYear().isAfter(i)).toList();
+        return books1;
     }
 
     @Override
     public List<Book> getBookByInitialLetter() {
-        return null;
+        List<Book> books1 = new LinkedList<>();
+        String letter = new Scanner(System.in).nextLine();
+        for (Book book : this.books) {
+            if (book.getName().startsWith(letter)) {
+                books1.add(book);
+            }
+        }
+        return books1;
     }
-
 
     @Override
     public Book maxPriceBook() {
-        Optional<Book> max = books.stream().max(Comparator.comparing(Book :: getPrice));
-        System.out.println(max);
+        System.out.println(this.books.stream().mapToInt(x -> x.getPrice().intValue()).max());
         return null;
     }
+
+    Comparator<Book> compare = new Comparator<Book>() {
+        @Override
+        public int compare(Book o1, Book o2) {
+            return o2.getPrice().compareTo(o1.getPrice());
+        }
+    };
 }
